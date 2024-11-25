@@ -30,19 +30,12 @@ class Pizzas(Resource):
         except Exception as e:
             return {'error': str(e)}, 400
         
-api.add_resource(Pizzas, '/pizzas')
-
-
-
 class Restaurants(Resource):
     def get(self):
         try:
-            # import ipdb; ipdb.set_trace()
             return [restaurant.to_dict(only=('id','name', 'address')) for restaurant in Restaurant.query], 200
         except Exception as e:
             return {'error': str(e)}, 400
-        
-api.add_resource(Restaurants, '/restaurants')
         
 class RestaurantById(Resource):
     def get(self, id):
@@ -64,9 +57,7 @@ class RestaurantById(Resource):
             return make_response({"message": "Restaurant deleted successfully"}, 204)
         except Exception as e:
             return {"error": str(e)}, 500
-        
-api.add_resource(RestaurantById, '/restaurants/<int:id>')
-
+    
 class RestaurantPizzas(Resource):
     def post(self):
         try:
@@ -75,12 +66,13 @@ class RestaurantPizzas(Resource):
             db.session.add(restaurantpizza)
             db.session.commit()
             return make_response(restaurantpizza.to_dict(), 201)
-        except Exception as e:
+        except Exception:
             return {'errors': ['validation errors']}, 400
 
+api.add_resource(Pizzas, '/pizzas')
+api.add_resource(Restaurants, '/restaurants')
+api.add_resource(RestaurantById, '/restaurants/<int:id>')
 api.add_resource(RestaurantPizzas, '/restaurant_pizzas')
-
-
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
